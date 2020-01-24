@@ -83,10 +83,10 @@ export default {
     display: inline-block;
   }
   .location-title {
-    width: 20%;
+    white-space: nowrap;
   }
   .location-details {
-    width: 70%;
+    padding-left: 10px;
   }
 }
 </style>
