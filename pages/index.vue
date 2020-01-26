@@ -1,8 +1,10 @@
 <template>
   <span>
-    <!-- <section class="section"> -->
-    <!-- <div class="columns is-mobile"> -->
-    <b-loading :is-full-page="isFullPage" :active.sync="isLoading" :can-cancel="true"></b-loading>
+    <b-loading
+      :is-full-page="isFullPage"
+      :active.sync="isLoading"
+      :can-cancel="true"
+    ></b-loading>
     <template v-if="!isLoading">
       <div class="tabs is-centered">
         <ul>
@@ -16,17 +18,24 @@
         </ul>
       </div>
       <section>
-        <div class="columns is-mobile">
-          <Location :tripData="tripData[selectedPage]" />
+        <div class="R is-mobile">
+          <template v-for="(trip, index) in tripData">
+            <Location
+              v-if="selectedPage === index"
+              :key="index"
+              :tripData="tripData[index]"
+            />
+          </template>
         </div>
       </section>
     </template>
-
+    <hr />
     <a
       class="button"
       href="https://docs.google.com/spreadsheets/d/17-QE5O_Yc41RWKVTEmzLtiBILOfqs3ZZ6RPwG6827s0/edit?pli=1#gid=0"
       target="_blank"
-    >Open Sheets</a>
+      >Open Sheets</a
+    >
   </span>
 </template>
 
@@ -83,7 +92,8 @@ export default {
           outputData[outputData.length - 1].dates.push({
             day: value.date,
             restaurants,
-            activities
+            activities,
+            display: false
           });
         });
         this.isLoading = false;

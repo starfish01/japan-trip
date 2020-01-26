@@ -7,9 +7,11 @@
       <div class="location-details">
         <h3>{{ tripData.startDate }} - {{ tripData.endDate }}</h3>
         <div class="accom">
-          {{accomdetails}}
+          {{ accomdetails }}
           <br />
-          <a v-if="accomLink" :href="accomLink" target="_blank">{{accomTitle}}</a>
+          <a v-if="accomLink" :href="accomLink" target="_blank">{{
+            accomTitle
+          }}</a>
           <span v-if="!accomLink">{{ accomTitle }}</span> -
           <template v-if="accomAddress">
             <a :href="accomAddress" target="_blank">Map Location</a>
@@ -19,20 +21,75 @@
     </div>
 
     <hr />
-    <div v-for="item in tripData.dates" :key="item.day">
-      <h3 class="title">{{ item.day }}</h3>
-      <h3 class="subtitle">Restaurants</h3>
-      <ul>
-        <li v-for="res in item.restaurants" :key="res">{{ res }}</li>
-      </ul>
-      <br />
-      <h3 class="subtitle">Activities</h3>
-      <ul>
-        <li v-for="res in item.activities" :key="res">{{ res }}</li>
-      </ul>
 
-      <hr />
-    </div>
+    <nav class="panel">
+      <div class="panel-heading is-inline-flex">
+        <div>Restaurants</div>
+        <a
+          :class="{ 'button-active': isShow }"
+          @click="isShow = !isShow"
+          class="panel-action-button"
+          ><b-icon icon="arrow-down" size="is-small" type="is-primary"
+        /></a>
+      </div>
+
+      <transition name="slide">
+        <div v-if="isShow" class="panel-block child">
+          <div style="padding:10px">
+            <ul>
+              <li v-for="res in restaurantList" :key="res">{{ res }}</li>
+            </ul>
+          </div>
+        </div>
+      </transition>
+    </nav>
+    <nav class="panel">
+      <div class="panel-heading is-inline-flex">
+        <div>Activites</div>
+        <a
+          :class="{ 'button-active': isShowActivities }"
+          @click="isShowActivities = !isShowActivities"
+          class="panel-action-button"
+          ><b-icon icon="arrow-down" size="is-small" type="is-primary"
+        /></a>
+      </div>
+
+      <transition name="slide">
+        <div v-if="isShowActivities" class="panel-block child">
+          <div style="padding:10px">
+            <ul>
+              <li v-for="res in activityList" :key="res">{{ res }}</li>
+            </ul>
+          </div>
+        </div>
+      </transition>
+    </nav>
+
+    <hr />
+
+    <nav class="panel" v-for="item in tripData.dates" :key="item.day">
+      <div class="panel-heading is-inline-flex">
+        <div>{{ item.day }}</div>
+        <a
+          v-if="item.activities.length && item.activities[0].length"
+          :class="{ 'button-active': item.display }"
+          @click="item.display = !item.display"
+          class="panel-action-button"
+          ><b-icon icon="arrow-down" size="is-small" type="is-primary"
+        /></a>
+        <span v-else class="panel-action-button">No Plans</span>
+      </div>
+
+      <transition name="slide">
+        <div v-if="item.display" class="panel-block child">
+          <div style="padding:10px">
+            <ul>
+              <li v-for="res in item.activities" :key="res">{{ res }}</li>
+            </ul>
+          </div>
+        </div>
+      </transition>
+    </nav>
   </div>
 </template>
 <script>
@@ -42,7 +99,11 @@ export default {
       accomdetails: "",
       accomLink: "",
       accomTitle: "",
-      accomAddress: ""
+      accomAddress: "",
+      restaurantList: [],
+      activityList: [],
+      isShowActivities: false,
+      isShow: false
     };
   },
   props: {
@@ -50,11 +111,14 @@ export default {
       type: Object
     }
   },
-  created() {
+  mounted() {
     this.accomDataFn();
+    this.getRestaurants();
+    this.getActivities();
   },
   methods: {
     accomDataFn() {
+      console.log(this.tripData.accommodation);
       _.forEach(this.tripData.accommodation, (value, key) => {
         if (value.includes("addressLink: ")) {
           this.accomAddress = value.replace("addressLink: ", "");
@@ -66,6 +130,24 @@ export default {
           this.accomdetails += value + " ";
         }
       });
+    },
+    getRestaurants() {
+      let formatedData = [];
+
+      _.forEach(this.tripData.dates, (value, key) => {
+        formatedData.push(value.restaurants);
+      });
+
+      this.restaurantList = _.spread(_.union)(formatedData);
+    },
+    getActivities() {
+      let formatedData = [];
+
+      _.forEach(this.tripData.dates, (value, key) => {
+        formatedData.push(value.activities);
+      });
+
+      this.activityList = _.spread(_.union)(formatedData);
     }
   }
 };

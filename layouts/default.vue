@@ -1,29 +1,11 @@
 <template>
-  <div>
-    <nav
-      class="navbar header has-shadow is-primary"
-      role="navigation"
-      aria-label="main navigation"
-    >
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <!-- <img src="~assets/buefy.png" alt="Buefy" height="28" /> -->
-        </a>
+  <section class="main-content">
+    <nav class="navbar header has-shadow is-primary"></nav>
 
-        <div class="navbar-burger">
-          <span />
-          <span />
-          <span />
-        </div>
-      </div>
-    </nav>
-
-    <section class="main-content columns">
-      <div class="container column ">
-        <nuxt />
-      </div>
-    </section>
-  </div>
+    <div class="container columns ">
+      <nuxt class="column" />
+    </div>
+  </section>
 </template>
 
 <script>
